@@ -97,7 +97,7 @@ export const UnitClosePage: React.FC<UnitClosePageProps> = ({
   const handleExportCsv = () => {
     const link = document.createElement('a');
     link.href = api.getExportCsvUrl();
-    link.setAttribute('download', `BPMS_UNIT_CLOSE_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `BYD_PCS_UNIT_CLOSE_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

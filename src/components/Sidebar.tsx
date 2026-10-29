@@ -10,11 +10,11 @@ import {
   Layers,
   CheckCheck,
   CalendarClock,
-  Wrench,
   Database,
   ExternalLink,
   X,
 } from 'lucide-react';
+import { BydLogo } from './BydLogo';
 
 export type ActiveTab = 'dashboard' | 'input-wo' | 'wip' | 'unit-close' | 'target-selesai';
 
@@ -88,15 +88,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isOpenMobile ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        {/* Brand Header */}
-        <div className="h-16 flex items-center justify-between px-5 border-b border-slate-800 bg-slate-950/40">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <Wrench className="w-5 h-5 text-white" />
+        {/* Brand Header with 2024 BYD Wordmark Logo */}
+        <div className="h-20 flex items-center justify-between px-4 border-b border-slate-800 bg-slate-950/80">
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2 mb-1.5">
+              <BydLogo size="sm" variant="white" className="h-5 drop-shadow-sm" />
+              <span className="text-[10px] font-black tracking-wider text-red-500 uppercase px-1.5 py-0.5 bg-red-500/15 border border-red-500/30 rounded">
+                Body & Paint
+              </span>
             </div>
-            <div>
-              <span className="font-black text-base tracking-tight text-white block">BPMS</span>
-              <span className="text-[10px] text-slate-400 tracking-wider uppercase block">Body Repair & Paint</span>
+            <div className="min-w-0">
+              <span className="font-extrabold text-[13px] tracking-tight text-white block truncate leading-tight">
+                Progress Control System
+              </span>
+              <span className="text-[10px] text-slate-400 font-medium block truncate">
+                Work Order & WIP Monitoring
+              </span>
             </div>
           </div>
           <button

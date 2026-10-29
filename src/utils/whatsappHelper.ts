@@ -40,17 +40,17 @@ export function generateWaMessage(
 
   switch (templateType) {
     case 'ready':
-      return `Kabar Baik! 🚗✨\n\nHalo Bpk/Ibu *${customerName}*,\nKendaraan Anda *${nopol}* (${tipe}) dengan No. WO *${noWo}* telah selesai proses pengerjaan body repair & cat.\n\nUnit telah melewati tahap pemeriksaan mutu (QC) & pembersihan akhir, dan saat ini *SIAP UNTUK DIAMBIL / DELIVERY* di bengkel kami.\n\nSilakan konfirmasi jadwal kedatangan Bpk/Ibu. Terima kasih atas kepercayaan Anda!`;
+      return `Kabar Baik dari BYD Workshop! 🚗⚡✨\n\nHalo Bpk/Ibu *${customerName}*,\nKendaraan Anda *${nopol}* (${tipe}) dengan No. WO *${noWo}* telah selesai proses pengerjaan di Bengkel Body Repair & Paint BYD.\n\nUnit telah melewati tahap pemeriksaan mutu (QC) & pembersihan akhir, dan saat ini *SIAP UNTUK DIAMBIL / DELIVERY* di bengkel kami.\n\nSilakan konfirmasi jadwal kedatangan Bpk/Ibu. Terima kasih atas kepercayaan Anda pada layanan BYD!`;
 
     case 'job_stopped':
-      return `Pemberitahuan Operasional ⚠️\n\nHalo Bpk/Ibu *${customerName}*,\nKami menginformasikan bahwa pengerjaan kendaraan *${nopol}* (${tipe}) No. WO *${noWo}* saat ini mengalami penundaan sementara (*Job Stopped*):\n\n🔍 *Kendala / Alasan:* ${wo.keterangan || 'Menunggu konfirmasi part / persetujuan tambahan'}\n\nTim kami siap berkoordinasi lebih lanjut agar proses pengerjaan dapat segera dilanjutkan kembali. Terima kasih.`;
+      return `Pemberitahuan Operasional BYD Workshop ⚠️\n\nHalo Bpk/Ibu *${customerName}*,\nKami menginformasikan bahwa pengerjaan kendaraan *${nopol}* (${tipe}) No. WO *${noWo}* saat ini mengalami penundaan sementara (*Job Stopped*):\n\n🔍 *Kendala / Alasan:* ${wo.keterangan || 'Menunggu konfirmasi part / persetujuan tambahan'}\n\nTim Service Advisor BYD kami siap berkoordinasi lebih lanjut agar proses pengerjaan dapat segera dilanjutkan kembali. Terima kasih.`;
 
     case 'reminder':
-      return `Halo Bpk/Ibu *${customerName}*,\n\nKami menginformasikan bahwa perbaikan kendaraan *${nopol}* (${tipe}) No. WO *${noWo}* ditargetkan selesai pada *${estimasi}*.\n\nSaat ini kendaraan berada di tahap *${progress}*. Tim teknisi kami sedang memaksimalkan proses pengerjaan agar unit selesai tepat waktu.\n\nTerima kasih atas kepercayaannya.`;
+      return `Halo Bpk/Ibu *${customerName}*,\n\nKami menginformasikan bahwa perbaikan kendaraan *${nopol}* (${tipe}) No. WO *${noWo}* ditargetkan selesai pada *${estimasi}*.\n\nSaat ini kendaraan berada di tahap *${progress}*. Tim teknisi BYD kami sedang memaksimalkan proses pengerjaan agar unit selesai tepat waktu.\n\nTerima kasih atas kepercayaannya.`;
 
     case 'progress':
     default:
-      return `Halo Bpk/Ibu *${customerName}*,\n\nKami dari Bengkel Body Repair & Paint menginformasikan update progres perbaikan kendaraan Anda:\n\n🚗 *Kendaraan:* ${tipe} (*${nopol}*)\n📋 *No. WO:* ${noWo}\n🔧 *Progres Saat Ini:* ${progress}\n📅 *Target Selesai:* ${estimasi}${keterangan}\n\nKami akan terus mengabarkan perkembangan pengerjaan unit Anda. Terima kasih!`;
+      return `Halo Bpk/Ibu *${customerName}*,\n\nKami dari *BYD Body & Paint Workshop (Progress Control System)* menginformasikan update progres perbaikan kendaraan Anda:\n\n🚗 *Kendaraan:* ${tipe} (*${nopol}*)\n📋 *No. WO:* ${noWo}\n🔧 *Tahap Pengerjaan:* ${progress}\n📅 *Target Selesai:* ${estimasi}${keterangan}\n\nKami akan terus mengabarkan perkembangan pengerjaan unit Anda. Terima kasih!`;
   }
 }
 

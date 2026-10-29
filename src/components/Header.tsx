@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Menu, RotateCcw, Database, Clock, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { BydLogo } from './BydLogo';
 
 interface HeaderProps {
   title: string;
@@ -59,9 +60,20 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Menu className="w-5 h-5" />
         </button>
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">{title}</h1>
-          <p className="text-xs text-slate-500 font-medium hidden sm:block">{subtitle}</p>
+        <div className="flex items-center gap-2.5">
+          <div className="lg:hidden px-2 py-1 rounded-md bg-slate-900 border border-slate-700 shrink-0">
+            <BydLogo size="xs" variant="white" className="h-3.5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">{title}</h1>
+              <span className="hidden xl:inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-900 text-slate-200 border border-slate-700 shadow-xs">
+                <BydLogo size="xs" variant="white" className="h-3 inline" />
+                <span className="text-[10px] text-red-400 font-extrabold uppercase">Body & Paint</span>
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 font-medium hidden sm:block">{subtitle}</p>
+          </div>
         </div>
       </div>
 

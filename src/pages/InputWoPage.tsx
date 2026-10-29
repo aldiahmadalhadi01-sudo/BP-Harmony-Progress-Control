@@ -233,15 +233,27 @@ export const InputWoPage: React.FC<InputWoPageProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                Tipe Kendaraan / Merek
+                Tipe Kendaraan / Model
               </label>
               <input
                 type="text"
                 value={formData.tipe_kendaraan || ''}
                 onChange={(e) => setFormData({ ...formData, tipe_kendaraan: e.target.value })}
-                placeholder="Contoh: Toyota Avanza 1.5 G"
+                placeholder="Contoh: BYD Seal Performance / Atto 3 / M6"
                 className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {['BYD Seal', 'BYD Atto 3', 'BYD Dolphin', 'BYD M6', 'BYD Sealion 7'].map((model) => (
+                  <button
+                    key={model}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, tipe_kendaraan: model })}
+                    className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 border border-slate-200 cursor-pointer transition-colors"
+                  >
+                    + {model}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
