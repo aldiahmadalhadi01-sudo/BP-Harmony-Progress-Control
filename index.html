@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BPMS — Work Order & Progress Control System</title>
+    <meta name="description" content="Sistem Manajemen Work Order (WO), Work In Progress (WIP), Unit Close, dan Pemantauan Target Selesai Bengkel Body Repair & Paint terintegrasi Google Sheets API." />
+    <meta property="og:title" content="BPMS — Work Order & Progress Control System" />
+    <meta property="og:description" content="Sistem Manajemen Work Order (WO), Work In Progress (WIP), Unit Close, dan Pemantauan Target Selesai Bengkel Body Repair & Paint terintegrasi Google Sheets API." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      // Suppress Vite HMR WebSocket errors in AI Studio iframe environment
+      window.addEventListener('error', function(event) {
+        if (
+          event.message &&
+          (event.message.includes('WebSocket') ||
+           event.message.includes('createWebSocketModuleRunnerTransport') ||
+           event.filename?.includes('@vite/client'))
+        ) {
+          event.stopImmediatePropagation();
+          event.preventDefault();
+        }
+      });
+      window.addEventListener('unhandledrejection', function(event) {
+        var reason = event.reason;
+        var msg = (reason && reason.message) ? reason.message : String(reason);
+        if (
+          msg.includes('WebSocket') ||
+          msg.includes('createWebSocketModuleRunnerTransport') ||
+          msg.includes('@vite/client')
+        ) {
+          event.stopImmediatePropagation();
+          event.preventDefault();
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

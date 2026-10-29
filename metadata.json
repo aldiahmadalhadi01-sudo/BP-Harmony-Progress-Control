@@ -1,0 +1,6 @@
+{
+  "name": "BPMS — Work Order & Progress Control System",
+  "description": "Sistem Manajemen Work Order (WO), Work In Progress (WIP), Unit Close, dan Pemantauan Target Selesai Bengkel Body Repair & Paint terintegrasi Google Sheets API.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
