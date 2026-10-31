@@ -121,10 +121,17 @@ export const DEFAULT_PROGRESS_OPTIONS = [
 ];
 
 export const DEFAULT_VENDORS = [
-  'Bengkel Internal (Main Shop)',
-  'Sublet Cat Oven Express',
-  'Sublet Las & Ketok Presisi',
-  'Glass & Windshield Pro',
-  'Sublet PDR & Dent Specialist',
-  'Toko Part & Material Mitra',
+  'Internal',
+  'Jawas',
 ];
+
+export const DEFAULT_VEHICLE_TYPES = [
+  'BYD Atto1',
+  'BYD Atto3',
+  'BYD Dolphin',
+  'BYD M6',
+  'BYD Seal',
+  'BYD Sealion 7',
+  'Denza',
+];
+

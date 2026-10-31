@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { WorkOrder, DEFAULT_PROGRESS_OPTIONS, DEFAULT_VENDORS } from '../types';
+import { WorkOrder, DEFAULT_PROGRESS_OPTIONS, DEFAULT_VENDORS, DEFAULT_VEHICLE_TYPES } from '../types';
 import { api } from '../api/client';
 import { getTodayJakarta } from '../utils/dateHelper';
 import {
@@ -49,7 +49,7 @@ export const InputWoPage: React.FC<InputWoPageProps> = ({
     item_part: '',
     tambahan_jasa: '',
     tambahan_part: '',
-    vendor: 'Bengkel Internal (Main Shop)',
+    vendor: 'Internal',
     progress: 'Bongkar',
     job_stopped: 'TIDAK',
     keterangan: '',
@@ -243,12 +243,12 @@ export const InputWoPage: React.FC<InputWoPageProps> = ({
                 className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
               <div className="flex flex-wrap gap-1 mt-1.5">
-                {['BYD Seal', 'BYD Atto 3', 'BYD Dolphin', 'BYD M6', 'BYD Sealion 7'].map((model) => (
+                {DEFAULT_VEHICLE_TYPES.map((model) => (
                   <button
                     key={model}
                     type="button"
                     onClick={() => setFormData({ ...formData, tipe_kendaraan: model })}
-                    className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 border border-slate-200 cursor-pointer transition-colors"
+                    className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-700 border border-slate-200 cursor-pointer transition-colors font-medium"
                   >
                     + {model}
                   </button>

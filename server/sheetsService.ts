@@ -7,11 +7,29 @@ import crypto from 'crypto';
 import { google, sheets_v4 } from 'googleapis';
 import { WorkOrder, ClosedWorkOrder, WIP_HEADERS, UNIT_CLOSE_HEADERS } from '../src/types.js';
 import { INITIAL_WIP_DATA, INITIAL_CLOSED_DATA } from './initialData.js';
-import { computeOTD, getTodayJakarta } from '../src/utils/dateHelper.js';
+import { computeOTD, getTodayJakarta, normalizeDateToISO } from '../src/utils/dateHelper.js';
+
+export const DEFAULT_WEB_APP_URL =
+  'https://script.google.com/macros/s/AKfycbxBZ2thK3utL_2wnyJPmoiP1lu9bWwyTTFmu9nU8QiLB3elTCcDLxqpu_ch2kYE4tNEBg/exec';
+
+function cleanRowDates<T extends Record<string, any>>(item: T): T {
+  if (!item) return item;
+  const cleaned: any = { ...item };
+  const dateKeys = ['tanggal_estimasi', 'tanggal_in', 'estimasi_selesai', 'aktual_unit_selesai'];
+  for (const k of dateKeys) {
+    if (k in cleaned && cleaned[k] !== undefined && cleaned[k] !== null && String(cleaned[k]).trim() !== '') {
+      const normalized = normalizeDateToISO(cleaned[k]);
+      if (normalized) {
+        cleaned[k] = normalized;
+      }
+    }
+  }
+  return cleaned as T;
+}
 
 // In-memory store used when Google Sheets credentials are not set or for instant local fallback
-let localWip: WorkOrder[] = [...INITIAL_WIP_DATA];
-let localClosed: ClosedWorkOrder[] = [...INITIAL_CLOSED_DATA];
+let localWip: WorkOrder[] = [...INITIAL_WIP_DATA].map(cleanRowDates);
+let localClosed: ClosedWorkOrder[] = [...INITIAL_CLOSED_DATA].map(cleanRowDates);
 const closeLock = new Set<string>(); // Lock for in-progress unit close operations
 
 export interface ConnectionStatus {
@@ -64,7 +82,7 @@ export class GoogleSheetsService {
   private sheets: sheets_v4.Sheets | null = null;
   private spreadsheetId: string = '';
   private authError: string | null = null;
-  private webAppUrl: string = process.env.GOOGLE_SHEETS_WEBAPP_URL?.trim() || '';
+  private webAppUrl: string = process.env.GOOGLE_SHEETS_WEBAPP_URL?.trim() || DEFAULT_WEB_APP_URL;
 
   constructor() {
     this.initClient();
@@ -235,7 +253,7 @@ export class GoogleSheetsService {
       try {
         const res = await fetch(this.webAppUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'setup' }),
           redirect: 'follow',
         });
@@ -318,7 +336,7 @@ export class GoogleSheetsService {
         for (const item of INITIAL_WIP_DATA) {
           await fetch(this.webAppUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: 'create_wip', data: item }),
             redirect: 'follow',
           });
@@ -378,8 +396,9 @@ export class GoogleSheetsService {
         if (res.ok) {
           const json = await res.json();
           if (json && Array.isArray(json.data)) {
-            localWip = json.data;
-            return json.data;
+            const cleaned = json.data.map(cleanRowDates);
+            localWip = cleaned;
+            return cleaned;
           }
         }
       } catch {
@@ -413,7 +432,7 @@ export class GoogleSheetsService {
             const idx = headers.indexOf(headerKey);
             item[headerKey] = idx !== -1 && row[idx] !== undefined ? String(row[idx]).trim() : '';
           });
-          return item as WorkOrder;
+          return cleanRowDates(item as WorkOrder);
         });
     } catch {
       return [...localWip];
@@ -428,8 +447,9 @@ export class GoogleSheetsService {
         if (res.ok) {
           const json = await res.json();
           if (json && Array.isArray(json.data)) {
-            localClosed = json.data;
-            return json.data;
+            const cleaned = json.data.map(cleanRowDates);
+            localClosed = cleaned;
+            return cleaned;
           }
         }
       } catch {
@@ -496,6 +516,9 @@ export class GoogleSheetsService {
     const newWo: WorkOrder = {
       ...data,
       no_wo: cleanNoWo,
+      tanggal_estimasi: normalizeDateToISO(data.tanggal_estimasi) || data.tanggal_estimasi || '',
+      tanggal_in: normalizeDateToISO(data.tanggal_in) || data.tanggal_in || '',
+      estimasi_selesai: normalizeDateToISO(data.estimasi_selesai) || data.estimasi_selesai || '',
       created_at: now,
       updated_at: now,
       job_stopped: data.job_stopped === 'YA' ? 'YA' : 'TIDAK',
@@ -506,7 +529,7 @@ export class GoogleSheetsService {
       try {
         const res = await fetch(this.webAppUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'create_wip', data: newWo }),
           redirect: 'follow',
         });
@@ -557,14 +580,24 @@ export class GoogleSheetsService {
 
   public async updateWip(no_wo: string, updates: Partial<WorkOrder>): Promise<WorkOrder> {
     const cleanNoWo = no_wo.trim();
+    const cleanUpdates = { ...updates };
+    if (cleanUpdates.tanggal_estimasi) {
+      cleanUpdates.tanggal_estimasi = normalizeDateToISO(cleanUpdates.tanggal_estimasi);
+    }
+    if (cleanUpdates.tanggal_in) {
+      cleanUpdates.tanggal_in = normalizeDateToISO(cleanUpdates.tanggal_in);
+    }
+    if (cleanUpdates.estimasi_selesai) {
+      cleanUpdates.estimasi_selesai = normalizeDateToISO(cleanUpdates.estimasi_selesai);
+    }
 
     // Apps Script Web App sync
     if (this.webAppUrl) {
       try {
         await fetch(this.webAppUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'update_wip', no_wo: cleanNoWo, data: updates }),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'update_wip', no_wo: cleanNoWo, data: cleanUpdates }),
           redirect: 'follow',
         });
       } catch (err: any) {
@@ -573,7 +606,7 @@ export class GoogleSheetsService {
 
       const idx = localWip.findIndex((w) => w.no_wo.toLowerCase() === cleanNoWo.toLowerCase());
       if (idx !== -1) {
-        localWip[idx] = { ...localWip[idx], ...updates, updated_at: new Date().toISOString() };
+        localWip[idx] = cleanRowDates({ ...localWip[idx], ...cleanUpdates, updated_at: new Date().toISOString() });
         return localWip[idx];
       }
       throw new Error(`Work Order '${cleanNoWo}' tidak ditemukan di WIP.`);
@@ -585,13 +618,13 @@ export class GoogleSheetsService {
       if (idx === -1) {
         throw new Error(`Work Order '${cleanNoWo}' tidak ditemukan di WIP.`);
       }
-      const updated: WorkOrder = {
+      const updated: WorkOrder = cleanRowDates({
         ...localWip[idx],
-        ...updates,
+        ...cleanUpdates,
         no_wo: localWip[idx].no_wo,
         created_at: localWip[idx].created_at,
         updated_at: new Date().toISOString(),
-      };
+      });
       localWip[idx] = updated;
       return updated;
     }
@@ -629,13 +662,13 @@ export class GoogleSheetsService {
         currentWo[h] = currentRow[idx] !== undefined ? String(currentRow[idx]) : '';
       });
 
-      const updatedWo: WorkOrder = {
+      const updatedWo: WorkOrder = cleanRowDates({
         ...currentWo,
-        ...updates,
+        ...cleanUpdates,
         no_wo: currentWo.no_wo,
         created_at: currentWo.created_at,
         updated_at: new Date().toISOString(),
-      };
+      });
 
       const updatedRowValues = headers.map((h) => {
         const val = (updatedWo as any)[h];
@@ -656,7 +689,7 @@ export class GoogleSheetsService {
     } catch {
       const idx = localWip.findIndex((w) => w.no_wo.toLowerCase() === cleanNoWo.toLowerCase());
       if (idx !== -1) {
-        localWip[idx] = { ...localWip[idx], ...updates, updated_at: new Date().toISOString() };
+        localWip[idx] = cleanRowDates({ ...localWip[idx], ...cleanUpdates, updated_at: new Date().toISOString() });
         return localWip[idx];
       }
       throw new Error(`Gagal memperbarui WO '${cleanNoWo}'`);
@@ -672,13 +705,13 @@ export class GoogleSheetsService {
     closeLock.add(cleanNoWo);
 
     try {
-      const actualDate = aktual_unit_selesai.trim() || getTodayJakarta();
+      const actualDate = normalizeDateToISO(aktual_unit_selesai) || getTodayJakarta();
 
       // Apps Script Web App sync
       if (this.webAppUrl) {
         const res = await fetch(this.webAppUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'close_unit', no_wo: cleanNoWo, aktual_unit_selesai: actualDate }),
           redirect: 'follow',
         });
@@ -687,7 +720,7 @@ export class GoogleSheetsService {
           throw new Error(json.error || 'Gagal menutup unit di Google Sheets via Web App');
         }
 
-        const closedData: ClosedWorkOrder = json.data;
+        const closedData: ClosedWorkOrder = cleanRowDates(json.data);
         localClosed.unshift(closedData);
         localWip = localWip.filter((w) => w.no_wo.toLowerCase() !== cleanNoWo.toLowerCase());
         return closedData;
